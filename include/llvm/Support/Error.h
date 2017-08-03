@@ -24,6 +24,7 @@
 #include "llvm/Support/Debug.h"
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/ErrorOr.h"
+#include "llvm/Support/ForceAllErrors.h"
 #include "llvm/Support/raw_ostream.h"
 #include <algorithm>
 #include <cassert>
@@ -692,6 +693,12 @@ public:
         , Unchecked(true)
 #endif
   {
+    if (ForceAllErrors::TurnInstanceIntoError()) {
+      HasError = true;
+      new (getErrorStorage()) error_type(ForceAllErrors::mockError());
+      return;
+    }
+
     new (getStorage()) storage_type(std::forward<OtherT>(Val));
   }
 

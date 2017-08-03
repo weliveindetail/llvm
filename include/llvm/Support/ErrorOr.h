@@ -17,6 +17,7 @@
 #define LLVM_SUPPORT_ERROROR_H
 
 #include "llvm/Support/AlignOf.h"
+#include "llvm/Support/ForceAllErrors.h"
 #include <cassert>
 #include <system_error>
 #include <type_traits>
@@ -101,6 +102,12 @@ public:
           typename std::enable_if<std::is_convertible<OtherT, T>::value>::type
               * = nullptr)
       : HasError(false) {
+    if (ForceAllErrors::TurnInstanceIntoError()) {
+      HasError = true;
+      new (getErrorStorage()) std::error_code(ForceAllErrors::mockErrorCode());
+      return;
+    }
+
     new (getStorage()) storage_type(std::forward<OtherT>(Val));
   }
 

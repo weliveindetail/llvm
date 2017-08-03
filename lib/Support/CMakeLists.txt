@@ -63,6 +63,7 @@ add_llvm_library(LLVMSupport
   FileUtilities.cpp
   FileOutputBuffer.cpp
   FoldingSet.cpp
+  ForceAllErrors.cpp
   FormattedStream.cpp
   FormatVariadic.cpp
   GlobPattern.cpp
