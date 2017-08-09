@@ -2,7 +2,6 @@
 #define LLVM_SUPPORT_FORCEALLERRORS_H
 
 #include "llvm/Support/ManagedStatic.h"
-#include "llvm/Support/raw_ostream.h"
 
 #include <cassert>
 #include <memory>
@@ -63,37 +62,18 @@ class ForceAllErrorsInScope {
   enum ModeT { Disabled = 0, Count, Break };
 
 public:
-  ForceAllErrorsInScope(int ForceErrorNumber, raw_ostream &OS = nulls())
-      : Mode(getModeFromClArg(ForceErrorNumber)), OutStream(OS) {
-    ForceAllErrors &FAE = ForceAllErrors::getInstance();
+  ForceAllErrorsInScope(int ForceErrorNumber);
+  ~ForceAllErrorsInScope();
 
-    switch (Mode) {
-    case Count:
-      FAE.BeginCounting(this);
-      OutStream << "Start counting mutation points\n";
-      break;
-    case Break:
-      FAE.BeginBreakInstance(ForceErrorNumber, this);
-      OutStream << "Wait for instance to break #" << ForceErrorNumber << "\n";
-      break;
-    case Disabled:
-      break;
-    }
-  }
+  bool isModeCounting() const { return Mode == Count; }
 
-  ~ForceAllErrorsInScope() {
-    ForceAllErrors &FAE = ForceAllErrors::getInstance();
-
-    if (Mode == Count) {
-      OutStream << "Found " << FAE.getCount() << " mutation points\n";
-    }
-
-    FAE.End();
+  int getNumMutationPoints() const {
+    assert(isModeCounting());
+    return ForceAllErrors::getInstance().getCount();
   }
 
 private:
   ModeT Mode;
-  raw_ostream &OutStream;
 
   ModeT getModeFromClArg(int ForceErrorNumber) {
     if (ForceErrorNumber < 0)

@@ -843,14 +843,28 @@ static void runMRIScript() {
   exit(0);
 }
 
+#ifndef NDEBUG
 static int ar_main() {
-  ForceAllErrorsInScope ScopedFAE(ForceErrorNumber, llvm::outs());
+  ForceAllErrorsInScope ScopedFAE(ForceErrorNumber);
 
+  // Do our own parsing of the command line because the CommandLine utility
+  // can't handle the grouped positional parameters without a dash.
+  ArchiveOperation Operation = parseCommandLine();
+  int res = performOperation(Operation, nullptr);
+
+  if (ScopedFAE.isModeCounting())
+    exit(ScopedFAE.getNumMutationPoints());
+
+  return res;
+}
+#else
+static int ar_main() {
   // Do our own parsing of the command line because the CommandLine utility
   // can't handle the grouped positional parameters without a dash.
   ArchiveOperation Operation = parseCommandLine();
   return performOperation(Operation, nullptr);
 }
+#endif
 
 static int ranlib_main() {
   if (RestOfArgs.size() != 1)
