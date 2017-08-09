@@ -26,6 +26,7 @@
 #include "llvm/Support/CommandLine.h"
 #include "llvm/Support/Errc.h"
 #include "llvm/Support/FileSystem.h"
+#include "llvm/Support/ForceAllErrors.h"
 #include "llvm/Support/Format.h"
 #include "llvm/Support/LineIterator.h"
 #include "llvm/Support/ManagedStatic.h"
@@ -97,6 +98,10 @@ static cl::opt<Format>
                          clEnumValN(GNU, "gnu", "gnu"),
                          clEnumValN(DARWIN, "darwin", "darwin"),
                          clEnumValN(BSD, "bsd", "bsd")));
+
+static cl::opt<int> ForceErrorNumber("force-error",
+    cl::desc("Set the Nth error instance to break for testing"),
+    cl::init(-1));
 
 static std::string Options;
 
@@ -839,6 +844,8 @@ static void runMRIScript() {
 }
 
 static int ar_main() {
+  ForceAllErrorsInScope ScopedFAE(ForceErrorNumber, llvm::outs());
+
   // Do our own parsing of the command line because the CommandLine utility
   // can't handle the grouped positional parameters without a dash.
   ArchiveOperation Operation = parseCommandLine();
