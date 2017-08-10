@@ -1,7 +1,7 @@
 # llvm-ForceAllErrors
 
-LLVM fork with built-in support for error path checks of llvm::Expected & llvm::ErrorOr.
-Instrumentation of the `llvm-ar` tool illustrates possible usage. Tested on Mac OSX 10.12 only.
+LLVM fork with built-in support for error path checks of llvm::Expected & llvm::ErrorOr on top of current `release_50`.
+Instrumentation of the `llvm-ar` tool illustrates possible usage - [find commits in ForceAllErrors branch](https://github.com/weliveindetail/llvm-ForceAllErrors/commits/ForceAllErrors). Tested on Mac OSX 10.12 only.
 Please find a detailed description of the approach [here](https://github.com/weliveindetail/ForceAllErrors-in-LLVM).
 
 ## Build
