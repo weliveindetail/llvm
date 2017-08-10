@@ -39,14 +39,7 @@ public:
 
   static ForceAllErrors &getInstance() { return *GlobalInstance; }
 
-  static bool TurnInstanceIntoError() {
-    ForceAllErrors &FAE = getInstance();
-
-    if (!FAE.Guard)
-      return false;
-
-    return ++FAE.InstanceCount == FAE.InstanceToBreak;
-  }
+  static bool TurnInstanceIntoError();
 
   static std::unique_ptr<ErrorInfoBase> mockError();
   static std::error_code mockErrorCode();

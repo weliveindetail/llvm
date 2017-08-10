@@ -1,12 +1,27 @@
 #include "llvm/Support/ForceAllErrors.h"
 
+#include "llvm/Support/Debug.h"
 #include "llvm/Support/Error.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/Support/Signals.h"
 
 #define DEBUG_TYPE "ForceAllErrors"
 
 namespace llvm {
 ManagedStatic<ForceAllErrors> ForceAllErrors::GlobalInstance;
+
+bool ForceAllErrors::TurnInstanceIntoError() {
+  ForceAllErrors &FAE = getInstance();
+
+  if (FAE.Guard) {
+    if (++FAE.InstanceCount == FAE.InstanceToBreak) {
+      DEBUG(sys::PrintStackTrace(dbgs(), 6));
+      return true;
+    }
+  }
+
+  return false;
+}
 
 std::unique_ptr<ErrorInfoBase> ForceAllErrors::mockError() {
   return make_unique<llvm::StringError>(
@@ -27,7 +42,7 @@ ForceAllErrorsInScope::ForceAllErrorsInScope(int ForceErrorNumber)
     break;
   case Break:
     FAE.BeginBreakInstance(ForceErrorNumber, this);
-    DEBUG(dbgs() << "Break instance #" << ForceErrorNumber << "\n");
+    DEBUG(dbgs() << "Aim to break instance #" << ForceErrorNumber << "\n");
     break;
   case Disabled:
     break;

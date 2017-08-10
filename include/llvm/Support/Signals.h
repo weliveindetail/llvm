@@ -51,7 +51,7 @@ namespace sys {
   void DisableSystemDialogsOnCrash();
 
   /// \brief Print the stack trace using the given \c raw_ostream object.
-  void PrintStackTrace(raw_ostream &OS);
+  void PrintStackTrace(raw_ostream &OS, int printDepth = 0);
 
   // Run all registered signal handlers.
   void RunSignalHandlers();
