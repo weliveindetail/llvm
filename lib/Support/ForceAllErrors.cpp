@@ -24,7 +24,6 @@ ForceAllErrorsInScope::ForceAllErrorsInScope(int ForceErrorNumber)
   switch (Mode) {
   case Count:
     FAE.BeginCounting(this);
-    DEBUG(dbgs() << "Start counting mutation points\n");
     break;
   case Break:
     FAE.BeginBreakInstance(ForceErrorNumber, this);
@@ -39,7 +38,7 @@ ForceAllErrorsInScope::~ForceAllErrorsInScope() {
   ForceAllErrors &FAE = ForceAllErrors::getInstance();
 
   if (Mode == Count) {
-    DEBUG(dbgs() << "Found " << FAE.getCount() << " mutation points\n");
+    DEBUG(dbgs() << FAE.getCount());
   }
 
   FAE.End();

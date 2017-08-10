@@ -850,12 +850,7 @@ static int ar_main() {
   // Do our own parsing of the command line because the CommandLine utility
   // can't handle the grouped positional parameters without a dash.
   ArchiveOperation Operation = parseCommandLine();
-  int res = performOperation(Operation, nullptr);
-
-  if (ScopedFAE.isModeCounting())
-    exit(ScopedFAE.getNumMutationPoints());
-
-  return res;
+  return performOperation(Operation, nullptr);
 }
 #else
 static int ar_main() {
